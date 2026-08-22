@@ -31,7 +31,7 @@ const signup = async(req,res)=>{
 const login = async(req,res) =>{
     try{
         const{email,password} = req.body;
-        if(!Email || !password){
+        if(!email || !password){
             throw new Error("Please Enter Email & Password")
 
         }
