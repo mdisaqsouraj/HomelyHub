@@ -46,4 +46,45 @@ const login = async(req,res) =>{
         res.status(400).json({status:"fail", message:error.message})
     }
 }
-export{signup,login}
+
+const protect = async(req,res,next)=>{
+    try{
+    let token;
+    
+    if(
+        req.headers.authorization &&
+        req.headers.authorization.startsWith("Bearer")
+
+    ){
+        token = req.headers.authorization.split(" ")[1]
+    }else if(
+        req.cookies.jwt && req.cookies.jwt !== "loggedout"){
+            token = req.cookies.jwt
+        }
+    if(!token){
+        throw new Error("You are not logged in!! Please login top access")
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+
+    const currentUser = await User.findById(decoded)
+    if(!currentUser){
+        throw new Error("The User belonging to the token Doesn't exists")
+    }
+    if(currentUser.changedPasswordAfter(decoded)){
+        throw new Error("The user recently changed the password, Please login again")
+    }
+
+    req.user = currentUser;
+    next();
+
+}catch(error){
+    res.status(401).json({
+        status:fail,
+        message:error.message
+    })
+
+}
+}
+
+
+export{signup,login,protect};

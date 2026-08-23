@@ -86,7 +86,22 @@ const propertySchema = new mongoose.Schema({
             pincode:Number
         },
         currentBookings:[
-
+            {
+                bookingId:{
+                    type:mongoose.Schema.type.ObjectId,
+                    ref:"Booking"
+                },
+                fromDate:{
+                    type:Date
+                },
+                toDate:{
+                    type:Date
+                },
+                UserId:{
+                type:mongoose.Schema.Types.ObjectId,
+                ref: "User"
+            }
+        }
         ],
         UserId:{
                 type:mongoose.Schema.Types.ObjectId,
