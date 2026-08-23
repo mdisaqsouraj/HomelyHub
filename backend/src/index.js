@@ -4,6 +4,7 @@ import cors from "cors"
 import cookieparser from "cookie-parser"
 import connectDB from "./utils/db.js";
 import {router} from "./routes/userRoutes.js"
+import { propertyRouters } from "./routes/propertyRouter.js";
 
 dotenv.config();
 const app = express();
@@ -20,6 +21,8 @@ app.get("/",(req,res)=>{
     res.send("HomelyHub server is running sucessfully");
 })
 app.use("/api/v1/rent/user",router);
+app.use("/api/v1/rent/listing",propertyRouters);
+
 connectDB()
 app.listen(PORT,()=>{
     console.log(`App is Running On PORT number: ${PORT}`);

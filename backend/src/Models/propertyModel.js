@@ -69,9 +69,9 @@ const propertySchema = new mongoose.Schema({
             ],
             validate:{
                 validator:function(arr){
-                return length.arr <=6;
+                return length.arr >=6;
                 },
-                message:"The images must contain atleast 6 picture";
+                message:"The images must contain atleast 6 picture"
             }
         },
         price:{
@@ -96,22 +96,22 @@ const propertySchema = new mongoose.Schema({
 
         slug:String,
         checkInTime:{
-            Type:String,
-            default:"11:00AM"
+            type:String,
+            default: "11:00AM"
         },
         checkOutTime:{
-            Type:String,
-            default:"01:00PM"
+            type:String,
+            default: "01:00PM"
         }
 
 })
 
-propertySchema.pre("Save", function(next){
+propertySchema.pre("save", function(next){
         this.slug= slugify(this.propertyName,{lower:true})
         next();
 })
 
-propertySchema.pre("Save", function(next)
+propertySchema.pre("save", function(next)
 {
     this.address.city = this.address.city.toLowerCase().replaceAll(" ","")
     next();
