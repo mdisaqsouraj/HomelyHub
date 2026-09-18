@@ -2,136 +2,125 @@ import slugify from 'slugify';
 import mongoose from 'mongoose';
 
 const propertySchema = new mongoose.Schema({
-
     propertyName:{
-        type:String,
-        required: [true,"Please Enter your property Name"]
-
+        type: String,
+        required:[true, "Please enter your property name"]
     },
     description:{
         type:String,
-        required:[true,"Please add information about your Property"],
-        maxlength:[500,"You can not fill description more than 500 characters"],
-
+        required:[true, "Please add information about your property"]
     },
     extraInfo:{
         type:String,
-        default:"checkin on time. good services available. food facility is available",
+        default:"checkin on time. good services."
     },
     propertyType:{
         type:String,
-        enum:["House","Flat","Hotel","Guest House", "Villa"],
+        enum:["House", "Flat", "Guest House", "Hotel"],
         default:"House"
     },
-    roomType:{
+        roomType:{
         type:String,
-        enum:["Anytype","Room","Entire Home"],
+        enum:["Anytype", "Room", "Entire Home"],
         default:"Anytype"
     },
+
     maximumGuest:{
-        type:Number,
-        required:[true,"Please give the maximum capacity of a room"],
-
-
-    },
-    aminities:[{
-        name:{
-        type:String,
-        required:true,
-        enum:["WiFi",
-            "Swimming Pool",
-            "Kitchen",
-            "Restaurant",
-            "AC",
-            "TV",
-            "Washing Machine",
-            "Oven" ,
-            "Parking",
-            "CCTv" ]
-    },
-        icon:{
-        type:String,
-        required:true
+        type:Number ,
+        required:[true, "Please give the maximum no of Guest that can oocupy"]
     },
 
-}],
-        images:{
-            type:[
-                {
-                    public_id:{
-                        type:String
-                    },
-                    url:{
-                        type:String,
-                        required:true
-                    }
-                }
-            ],
-            validate:{
-                validator:function(arr){
-                return length.arr >=6;
-                },
-                message:"The images must contain atleast 6 picture"
+    amenities:[
+        {
+            name:{
+                type:String,
+                required:true,
+                enum:[
+                    "Wifi",
+                    "Kitchen",
+                    "Ac",
+                    "Waching Machine",
+                    "Tv",
+                    "Pool",
+                    "Free Parking"
+                ]
+            },
+            icon:{
+                type:String,
+                required:true
             }
-        },
-        price:{
-            type:Number,
-            required:[true,"Please Enter the price per night"],
-            default:500
-        },
-        address:{
-            area:String,
-            city:String,
-            state:String,
-            pincode:Number
-        },
-        currentBookings:[
+        }
+    ],
+    images:{
+        type:[
             {
-                bookingId:{
-                    type:mongoose.Schema.type.ObjectId,
-                    ref:"Booking"
+                public_id:{
+                    type:String
                 },
-                fromDate:{
-                    type:Date
-                },
-                toDate:{
-                    type:Date
-                },
-                UserId:{
-                type:mongoose.Schema.Types.ObjectId,
-                ref: "User"
+                url:{
+                    type:String,
+                    required:true
+                }
             }
-        }
         ],
-        UserId:{
-                type:mongoose.Schema.Types.ObjectId,
-                ref: "User"
-
-        },
-
-        slug:String,
-        checkInTime:{
-            type:String,
-            default: "11:00AM"
-        },
-        checkOutTime:{
-            type:String,
-            default: "01:00PM"
+        validate:{
+            validator:function(arr){
+                return arr.length >=6;
+            },
+            message: "The images must contain atleast 6 images"
         }
+    },
+    price:{
+        type:Number,
+        required:[true,"please enter the price per night value"],
+        default:500
+    },
+    address:{
+        area:String,
+        city:String,
+        state:String,
+        pincode:Number
+    },
+    //
+    currentBookings:[
+           {
+            bookingId:{
+                type:mongoose.Schema.Types.ObjectId,
+                ref:"Booking"
+            },
+            fromDate:{
+                type:Date
+            },
+            toDate:{
+                 type:Date,
+            },
+            userId:{
+                type:mongoose.Schema.Types.ObjectId,
+                ref:"User"
+            }
+           }
+    ],
 
+    userId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+
+    slug:String,
+    checkInTime:{type:String,default:"11:00"},
+    checkOutTime:{type:String,default:"13:00"}
 })
 
-propertySchema.pre("save", function(next){
-        this.slug= slugify(this.propertyName,{lower:true})
-        next();
+propertySchema.pre("save", function(){
+    this.slug =slugify(this.propertyName,{lower:true});
+    
 })
 
-propertySchema.pre("save", function(next)
-{
+propertySchema.pre("save", function(){
     this.address.city = this.address.city.toLowerCase().replaceAll(" ","")
-    next();
+
 })
 
-const Property = mongoose.model("Property",propertySchema);
-
+// const Property = mongoose.model("Property", propertySchema);
+const Property = mongoose.models.Property ||  mongoose.model("Property", propertySchema);
 export{Property};

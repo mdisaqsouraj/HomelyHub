@@ -1,62 +1,68 @@
+//which property???
+//whis user
+//price
+//dates
+//guests,
+//paid
+
 import mongoose from "mongoose";
- 
 
-const bookingSchema = new mongoose.Schema({
-    property:{
+
+const bookingSchema = new mongoose.Schema(
+    {
+      property:{
         type: mongoose.Schema.ObjectId,
-        ref :"Property",
-        req :[true,"Booking must belong to a property"]
-    },
-    user:{
-        type:mongoose.Schema.ObjectId,
-        ref:"User",
-        req:[true,"Booking must belong to the user"]
-    },
-    price:{
+        ref: "Property",
+        required:[true,"Booking must belong to a Property"]
+      },
+
+      user:{
+         type: mongoose.Schema.ObjectId,
+        ref: "User",
+        required:[true,"Booking must belong to a User"]
+      },
+
+      price:{
         type:Number,
-        req:[true,"Booking must have a price"]
+        required:[true,"Booking must have price"]
+      },
 
-    },
-    createdAt:{
+      createdAt:{
         type:Date,
-        default:Date.now();
-
-    },
-    paid:{
+        default:Date.now()
+      },
+      paid:{
         type:Boolean,
         default:true
-    },
-    fromDate:{
+      },
+      fromDate:{
         type:Date
+      },
+      toDate:{
+       type:Date,
+      },
+      guests:{
+        type:Number
+      },
+      numberOfnights:{
+        type:Number
+      }
     },
-    toDate:{
-        type:Date
-    },
-    guests:{
-        type:Number,
-        default:1
-
-    },
-    numberOfnights:{
-        type:Number,
-        default:1
-    }
-},
-{timestamps:true}
-
+    
+    {timestamps:true}
 );
 
 
-bookingSchema.pre(/^find/, function(next){
-    this.populate("user".populate({
-        path:property,
-        select: " maximumGuest propertyName roomType images address"
+bookingSchema.pre(/^find/, function(){
+    this.populate("user");
 
-    }));
+        this.populate({
+        path:"property",
+        select:  "maximumGuest images propertyName address"
+    });
+ 
+})
 
-    next();
-});
 const Booking = mongoose.model("Booking", bookingSchema);
 
-export{Booking};
-
+export {Booking};
